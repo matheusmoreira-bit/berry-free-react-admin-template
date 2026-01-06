@@ -1,0 +1,5 @@
+[
+  { "username": "Apiuser", "password": "Sap@2025", "roles": ["admin"] },
+  { "username": "approver1", "password": "pass1", "roles": ["approver"] },
+  { "username": "approver2", "password": "pass2", "roles": ["approver"] }
+]

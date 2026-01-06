@@ -1,0 +1,16 @@
+FROM node:18-alpine
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY server/package*.json ./
+RUN npm install --production --no-audit --no-fund
+
+# Bundle app source
+COPY server/ .
+
+# Expose port
+EXPOSE 4000
+
+CMD ["node", "index.js"]

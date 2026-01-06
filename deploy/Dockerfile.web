@@ -1,0 +1,25 @@
+FROM node:18-alpine AS build
+WORKDIR /app
+
+# Temporarily disable TLS verification in build stage (workaround for internal CA / proxy with self-signed cert)
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
+# Install Yarn globally as a fallback (avoids corepack network resolution issues in some environments)
+RUN npm set registry https://registry.npmjs.org/ && npm config set strict-ssl false && npm install -g corepack --verbose && corepack enable && NODE_TLS_REJECT_UNAUTHORIZED=0 corepack prepare yarn@4.10.3 --activate
+
+# Copy lockfile and manifest first to leverage Docker cache
+COPY vite/package.json vite/yarn.lock ./
+
+# Install dependencies using Yarn (project specifies Yarn in package.json)
+# Use verbose output to diagnose failures; avoid deprecated --non-interactive flag
+RUN yarn install --immutable --check-cache --json
+
+# Copy source and build
+COPY vite/ .
+RUN yarn build
+
+FROM nginx:1.22-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
