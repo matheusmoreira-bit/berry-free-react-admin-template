@@ -161,6 +161,20 @@ server {
 ### Option B — Deploy to a PaaS (DigitalOcean App Platform, Heroku, Render)
 - Build and publish the `server/` as a Node service; set environment variables in the platform UI. Use the Vite build output served via a static site or a CDN. Use the provider's load balancer / managed TLS.
 
+### Deploy frontend to Vercel (quick)
+You can deploy the `vite/` frontend to Vercel as a static site quickly:
+
+1. In the Vercel dashboard, create a new project and point it at this repository (or the `vite/` folder as the root if using a monorepo).
+2. Build command: `yarn build` (or `npm run build`) — Output directory: `dist`.
+3. Set environment variables in the Vercel project settings:
+   - `VITE_API_BASE_URL` — full URL of your backend API (e.g. `https://api.example.com`) or leave blank to use relative `/api` paths.
+4. Optional: configure redirects or rewrites in `vercel.json` if you need custom routing (a sample `vite/vercel.json` exists).
+
+Notes:
+- The frontend now respects `VITE_API_BASE_URL` for API calls. If set, all calls to `/api/...` will be prefixed with the value; otherwise the app uses relative `/api/...` paths (same-origin).
+- For the backend, use a hosted provider (e.g. Render, DigitalOcean, Cloud Run) and make sure CORS and env vars are configured appropriately.
+- This approach separates frontend hosting (fast, CDN-powered) from backend hosting (serverful or serverless), which is recommended for this PoC.
+
 ### Persistence & production concerns
 - Do **not** rely on `server/data/requests.json` for production; use a proper DB (Postgres, MySQL, MongoDB). Replace load/save functions with DB adapters.
 - Protect secrets: store credentials in a secure secrets manager (Vault, cloud provider secrets) and rotate regularly.

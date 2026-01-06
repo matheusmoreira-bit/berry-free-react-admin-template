@@ -1,11 +1,17 @@
 export async function request(path, opts = {}){
+  // Allow overriding API base URL via Vite env var `VITE_API_BASE_URL`.
+  // If not set, requests remain relative (same-origin): `/api/...`
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+  const base = API_BASE.replace(/\/$/, '');
+  const url = /^https?:\/\//.test(path) ? path : `${base}${path.startsWith('/') ? path : `/${path}`}`;
+
   const token = localStorage.getItem('b1_token');
   opts.headers = opts.headers || {};
   if (token) opts.headers['Authorization'] = `Bearer ${token}`;
   // default accept json
   opts.headers['Accept'] = opts.headers['Accept'] || 'application/json';
   try{
-    const res = await fetch(path, opts);
+    const res = await fetch(url, opts);
     if (res.status === 401){
       // unauthorized: redirect to login
       localStorage.removeItem('b1_token');
