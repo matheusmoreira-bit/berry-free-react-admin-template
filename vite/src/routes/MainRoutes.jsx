@@ -14,6 +14,12 @@ const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+// purchase orders / approvals
+const Approvals = Loadable(lazy(() => import('views/purchase-orders/Approvals')));
+const CreateApproval = Loadable(lazy(() => import('views/purchase-orders/CreateApproval')));
+const PendingApprovals = Loadable(lazy(() => import('views/purchase-orders/PendingApprovals')));
+const ApprovalDetail = Loadable(lazy(() => import('views/purchase-orders/ApprovalDetail')));
+const Login = Loadable(lazy(() => import('views/Auth/Login')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -46,6 +52,19 @@ const MainRoutes = {
       path: 'shadow',
       element: <UtilsShadow />
     },
+    {
+      path: 'approvals',
+      children: [
+        { path: '', element: <Approvals /> },
+        { path: 'create', element: <CreateApproval /> },
+        { path: 'pending', element: <PendingApprovals /> },
+        { path: 'requests/:id', element: <ApprovalDetail /> }
+      ]
+    },
+    {
+      path: 'login',
+      element: <Login />
+    }
     {
       path: '/sample-page',
       element: <SamplePage />

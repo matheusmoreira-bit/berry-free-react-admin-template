@@ -16,6 +16,7 @@ import MainContentStyled from './MainContentStyled';
 import Customization from '../Customization';
 import Loader from 'ui-component/Loader';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
+import { ToastProvider } from 'contexts/ToastContext';
 
 import useConfig from 'hooks/useConfig';
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
@@ -61,8 +62,10 @@ export default function MainLayout() {
         <Box sx={{ ...{ px: { xs: 0 } }, minHeight: 'calc(100vh - 128px)', display: 'flex', flexDirection: 'column' }}>
           {/* breadcrumb */}
           <Breadcrumbs />
-          <Outlet />
-          <Footer />
+          <ToastProvider>
+            <Outlet />
+            <Footer />
+          </ToastProvider>
         </Box>
       </MainContentStyled>
       <Customization />
